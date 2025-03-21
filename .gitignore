@@ -1,0 +1,21 @@
+.venv
+uploads/
+temp/
+tn_server/temp/
+tn_server/*.db
+.idea/
+
+# Кеши Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Логи
+logs/
+*.log
+
+# Секретные файлы
+.env
+*.pem
+*.key

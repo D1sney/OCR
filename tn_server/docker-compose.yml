@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis:6.2
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  celery:
+    build: .                              # (BUILD_DIR) - директория, где лежит Dockerfile, обычно текущая ('.')
+    volumes:
+      - .:/app                            # Это так называемый ТОМ (HOST_DIR:CONTAINER_DIR) - монтирует вашу текущую директорию (с вашим кодом) в /app внутри контейнера
+    working_dir: /app                     # (CONTAINER_WORKDIR) - устанавливает рабочую директорию контейнера
+    command: celery -A celery_tasks worker --loglevel=info --concurrency=4
+    # Здесь (TASK_MODULE) замените на имя модуля с вашими задачами, например, если файл называется tasks.py, пишите "tasks"
+    depends_on:
+      - redis
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/1
+
